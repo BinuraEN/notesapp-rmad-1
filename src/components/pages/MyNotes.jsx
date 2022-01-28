@@ -1,7 +1,14 @@
 import { Container, Grid, Alert, Snackbar, Skeleton } from "@mui/material";
 import NoteItem from "../NoteItem";
 import { db } from "../../config/firebase-config";
-import { collection, onSnapshot, doc, deleteDoc } from "@firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  query,
+  orderBy,
+} from "@firebase/firestore";
 import { useEffect, useState } from "react";
 
 function MyNotes() {
@@ -17,7 +24,8 @@ function MyNotes() {
 
   const getData = async () => {
     setitemsLoading(true);
-    const unsubscribe = onSnapshot(collection(db, "notes"), (querySnapshot) => {
+    const q = query(collection(db, "notes"), orderBy("created_at", "desc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const notesArr = [];
       querySnapshot.docs.map((doc) => {
         const note = {
